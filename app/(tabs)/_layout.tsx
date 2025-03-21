@@ -1,51 +1,57 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import TabBarBackground from '@/components/ui/TabBarBackground';
-import { Colors } from '@/constants/Colors';
-import { useColorScheme } from '@/hooks/useColorScheme';
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
+        tabBarActiveTintColor: "#70E000",
+        tabBarInactiveTintColor: "#666",
         headerShown: false,
         tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
         tabBarStyle: Platform.select({
           ios: {
+            flex: 1,
             position: 'absolute',
+            bottom: 30,
+            marginHorizontal: 50,
+            borderRadius: 10,
+            backgroundColor: '#F7F5FA',
+            height: 65,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
           },
           default: {},
         }),
+        tabBarLabelStyle: {
+          display: 'none'
+        },
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Accueil',
+          tabBarIcon: ({ color }) => <IconSymbol size={32} name="house.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="camera"
         options={{
-          title: 'Camera',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="camera.fill" color={color} />,
-          tabBarStyle: { display: 'none' },  // Cache la barre pour cet onglet spécifique
+          title: 'Caméra',
+          tabBarIcon: ({ color }) => <IconSymbol size={32} name="camera.fill" color={color} />,
+          tabBarStyle: { display: 'none' },
           headerShown: false, 
         }}
       />
       <Tabs.Screen
         name="explore"
         options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Compte',
+          tabBarIcon: ({ color }) => <IconSymbol size={32} name="person.fill" color={color} />,
         }}
       />
     </Tabs>

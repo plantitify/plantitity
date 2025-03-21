@@ -1,7 +1,6 @@
 import { CameraView, CameraType, useCameraPermissions, CameraCapturedPicture } from "expo-camera"
 import { useState, useRef } from "react"
 import {
-    Button,
     StyleSheet,
     Text,
     TouchableOpacity,
@@ -71,82 +70,91 @@ export default function CameraScreen() {
     if (!permission.granted) {
         return (
             <SafeAreaView style={styles.containerMessage}>
-                <Text style={styles.message}>
-                    Nous avons besoin de votre permission pour utiliser la caméra
-                </Text>
-                <Button onPress={requestPermission} title="Autoriser l'accès" />
+                <View style={styles.messageWrapper}>
+                    <View style={styles.messageContent}>
+                        <View style={styles.messageIconWrapper}>
+                            <Image source={require("../../assets/images/camera-icon.png")} style={styles.messageIcon} />
+                            <Text style={styles.messageTitle}>Permission requise</Text>
+                        </View>
+                        <Text style={styles.message}>
+                            Nous avons besoin de votre permission pour utiliser la caméra
+                        </Text>
+                        <TouchableOpacity
+                            style={styles.permissionButton}
+                            onPress={requestPermission}
+                        >
+                            <Text style={styles.buttonText}>Autoriser l'accès</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </SafeAreaView>
         )
     }
 
     return (
-        <SafeAreaView style={styles.container}>
-            <SafeAreaView style={styles.containerMessage}>
-                <Text style={styles.message}>
-                    Nous avons besoin de votre permission pour utiliser la caméra
-                </Text>
-                <Button onPress={requestPermission} title="Autoriser l'accès" />
+        <>
+            <SafeAreaView style={styles.container}>
+                {photo ? (
+                    <View style={styles.previewContainer}>
+                        <Image source={{ uri: photo }} style={styles.preview} />
+                        <View style={styles.photoControls}>
+                            <TouchableOpacity style={styles.controlButton} onPress={retakePhoto}>
+                                <Text style={styles.controlText}>Reprendre</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.controlButton, styles.shareButton]}>
+                                <Text style={styles.controlText}>Partager</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                ) : (
+                    <CameraView
+                        style={styles.camera}
+                        facing={facing}
+                        ref={cameraRef}
+                        flash={flash}
+                    >
+                        <View style={styles.controls}>
+                            <View style={styles.topControls}>
+                                <TouchableOpacity style={styles.backButton} onPress={goBack}>
+                                    <Text style={styles.backButtonText}>← Retour</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.flashButton}
+                                    onPress={toggleFlash}
+                                >
+                                    <Text style={styles.text}>
+                                        {flash === "on" ? "⚡️ ON" : "⚡️ OFF"}
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+
+                            <View style={styles.bottomControls}>
+                                <TouchableOpacity
+                                    style={styles.flipButton}
+                                    onPress={toggleCameraFacing}
+                                >
+                                    <Text style={styles.text}>🔄</Text>
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={styles.captureButton}
+                                    onPress={takePhoto}
+                                    disabled={isTakingPicture}
+                                >
+                                    {isTakingPicture ? (
+                                        <ActivityIndicator color='#fff' size='small' />
+                                    ) : (
+                                        <View style={styles.captureButtonInner} />
+                                    )}
+                                </TouchableOpacity>
+
+                                <View style={styles.spacer} />
+                            </View>
+                        </View>
+                    </CameraView>
+                )}
             </SafeAreaView>
-            {photo ? (
-                <View style={styles.previewContainer}>
-                    <Image source={{ uri: photo }} style={styles.preview} />
-                    <View style={styles.photoControls}>
-                        <TouchableOpacity style={styles.controlButton} onPress={retakePhoto}>
-                            <Text style={styles.controlText}>Reprendre</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={[styles.controlButton, styles.shareButton]}>
-                            <Text style={styles.controlText}>Partager</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            ) : (
-                <CameraView
-                    style={styles.camera}
-                    facing={facing}
-                    ref={cameraRef}
-                    flash={flash}
-                >
-                    <View style={styles.controls}>
-                        <View style={styles.topControls}>
-                            <TouchableOpacity style={styles.backButton} onPress={goBack}>
-                                <Text style={styles.backButtonText}>← Retour</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={styles.flashButton}
-                                onPress={toggleFlash}
-                            >
-                                <Text style={styles.text}>
-                                    {flash === "on" ? "⚡️ ON" : "⚡️ OFF"}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-
-                        <View style={styles.bottomControls}>
-                            <TouchableOpacity
-                                style={styles.flipButton}
-                                onPress={toggleCameraFacing}
-                            >
-                                <Text style={styles.text}>🔄</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                style={styles.captureButton}
-                                onPress={takePhoto}
-                                disabled={isTakingPicture}
-                            >
-                                {isTakingPicture ? (
-                                    <ActivityIndicator color='#fff' size='small' />
-                                ) : (
-                                    <View style={styles.captureButtonInner} />
-                                )}
-                            </TouchableOpacity>
-
-                            <View style={styles.spacer} />
-                        </View>
-                    </View>
-                </CameraView>
-            )}
-        </SafeAreaView>
+        </>
     )
 }
 
@@ -158,21 +166,56 @@ const styles = StyleSheet.create({
     containerMessage: {
         height: "30%",
         backgroundColor: "white",
-        alignItems: "center",
-        justifyContent: "center",
         zIndex: 1000,
         position: "absolute",
         top: 80,
         left: 40,
         right: 40,
-        borderRadius: 10,
+        borderRadius: 20,
+    },
+    messageWrapper: {
+        flex: 1,
         padding: 20,
+    },
+    messageContent: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    messageTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "#1a1a1a",
     },
     message: {
         textAlign: "center",
-        paddingBottom: 20,
-        color: "black",
+        marginBottom: 24,
+        color: "#666",
         fontSize: 16,
+        lineHeight: 24,
+    },
+    messageIcon: {
+        width: 30,
+        height: 24,
+    },
+    messageIconWrapper: {
+        flexDirection: "row",
+        alignItems: "center",
+        marginBottom: 16,
+        gap: 10,
+    },
+    permissionButton: {
+        backgroundColor: "#70E000",
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        borderRadius: 8,
+        minWidth: 200,
+        alignItems: "center",
+    },
+    buttonText: {
+        color: "white",
+        fontSize: 16,
+        fontWeight: "600",
     },
     camera: {
         flex: 1,
