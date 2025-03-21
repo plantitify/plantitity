@@ -3,15 +3,17 @@ import { useState, useRef } from "react"
 import { StyleSheet, Text, TouchableOpacity, View, Image, SafeAreaView, Alert, ActivityIndicator } from "react-native"
 import { router } from "expo-router"
 import * as MediaLibrary from "expo-media-library"
+import * as FileSystem from "expo-file-system"
 
 export default function CameraScreen() {
 	const [facing, setFacing] = useState<CameraType>("back")
 	const [permission, requestPermission] = useCameraPermissions()
     const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions()
 	const cameraRef = useRef<CameraView | null>(null)
-	const [photo, setPhoto] = useState<string | null>(null)
+	const [photo, setPhoto] = useState<string>('')
 	const [flash, setFlash] = useState<"off" | "on">("off")
 	const [isTakingPicture, setIsTakingPicture] = useState(false)
+    const [base64, setBase64] = useState("")
 
 
 	const takePhoto = async () => {
@@ -36,6 +38,26 @@ export default function CameraScreen() {
 			}
 		}
 	}
+
+    const convertToBase64 = async (uri: string) => {
+        try {
+            if(photo){
+                const base64 = await FileSystem.readAsStringAsync(photo, {
+                    encoding: FileSystem.EncodingType.Base64,
+                })
+                setBase64(base64)
+                console.log(base64)
+            }
+        } catch (error) {
+            console.error("Erreur de conversion en base64:", error)
+            return null
+        }
+    }
+
+    const sendAPI = async () => {
+        await convertToBase64(photo)
+        
+    }
 
     const savePhoto = async () => {
 		if (photo) {
@@ -66,7 +88,7 @@ export default function CameraScreen() {
 	}
 
 	const retakePhoto = () => {
-		setPhoto(null)
+		setPhoto('')
 	}
 
 	const goBack = () => {
@@ -118,6 +140,12 @@ export default function CameraScreen() {
 							<TouchableOpacity
 								style={styles.controlButton}
 								onPress={retakePhoto}
+							>
+								<Text style={styles.controlText}>Reprendre</Text>
+							</TouchableOpacity>
+							<TouchableOpacity
+								style={styles.controlButton}
+								onPress={sendAPI}
 							>
 								<Text style={styles.controlText}>Envoyer</Text>
 							</TouchableOpacity>
