@@ -1,28 +1,37 @@
 import axios, { AxiosHeaders, AxiosResponse } from "axios";
+import { IdentificationService } from "./services/identificationService";
 
 export class Api {
   baseUrl: string;
   apiKey: string;
+  identificationService?: IdentificationService;
 
   constructor(
-    baseUrl = "http://my-api.plantnet.org/v2",
-    apiKey = "2b10CtggAuWlwUGGubfSRUp0gO"
+    baseUrl = "/https://plant.id/api/v3",
+    apiKey = "CQZ8AJwf4z0T7RuGiLWf6KtlNMkRsREQjdEWBC14szQXlzoFS2"
   ) {
     this.baseUrl = baseUrl;
     this.apiKey = apiKey;
   }
 
+  get identification(): IdentificationService {
+    if (!this.identificationService) {
+      this.identificationService = new IdentificationService(this);
+    }
+    return this.identificationService;
+  }
+
   get headers(): AxiosHeaders {
     const headers = new AxiosHeaders();
     headers.set("Content type", "application/json");
-    headers.set("api-key", `${this.apiKey}`);
+    headers.set("Api-Key", this.apiKey);
 
     return headers;
   }
 
   async get(endpoint: string) {
     try {
-      const response = await axios.get(`${this.baseUrl}/${endpoint},`, {
+      const response = await axios.get(`${this.baseUrl}/${endpoint}`, {
         headers: this.headers,
       });
 
