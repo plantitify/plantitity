@@ -7,7 +7,7 @@ export class Api {
   identificationService?: IdentificationService;
 
   constructor(
-    baseUrl = "/https://plant.id/api/v3",
+    baseUrl = "https://plant.id/api/v3",
     apiKey = "CQZ8AJwf4z0T7RuGiLWf6KtlNMkRsREQjdEWBC14szQXlzoFS2"
   ) {
     this.baseUrl = baseUrl;

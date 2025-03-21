@@ -9,7 +9,8 @@ export class IdentificationService {
   }
 
   async create(attrs: string[]): Promise<Identification> {
-    const response = await this.api.post("/identification", attrs);
+    console.log(attrs);
+    const response = await this.api.post("identification", attrs);
 
     try {
       const identificationData = response as IdentificationData;

@@ -4,8 +4,10 @@ import { StyleSheet, Text, TouchableOpacity, View, Image, SafeAreaView, Alert, A
 import { router } from "expo-router"
 import * as MediaLibrary from "expo-media-library"
 import * as FileSystem from "expo-file-system"
+import { Api } from "@/api/src/api"
 
 export default function CameraScreen() {
+	const api = new Api()
 	const [facing, setFacing] = useState<CameraType>("back")
 	const [permission, requestPermission] = useCameraPermissions()
     const [mediaLibraryPermission, requestMediaLibraryPermission] = MediaLibrary.usePermissions()
@@ -54,9 +56,21 @@ export default function CameraScreen() {
         }
     }
 
-    const sendAPI = async () => {
-        await convertToBase64(photo)
-        
+	const sendAPI = async () => {
+		console.log('BASE64:')
+		console.log(base64)
+       await convertToBase64(photo)
+		const response = await api.identification.create([base64])
+		const suggestions = response.result?.classification?.suggestions
+		const names: any = []
+
+		if (suggestions) {
+			suggestions.forEach(suggestion => {
+				names.push(suggestion.name)
+			});
+		}
+
+		console.log(names)
     }
 
     const savePhoto = async () => {
