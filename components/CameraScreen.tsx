@@ -12,6 +12,8 @@ import {
 	ActivityIndicator,
 } from "react-native"
 import * as MediaLibrary from "expo-media-library"
+import * as FileSystem from "expo-file-system"
+
 
 export default function App() {
 	const [facing, setFacing] = useState<CameraType>("back")
@@ -21,6 +23,7 @@ export default function App() {
 	const [photo, setPhoto] = useState<string | null>(null)
 	const [flash, setFlash] = useState<"off" | "on">("off")
 	const [isTakingPicture, setIsTakingPicture] = useState(false)
+	const [base64, setBase64] = useState('')
 
 	useEffect(() => {
 		// Demander la permission de sauvegarder les photos
@@ -30,6 +33,18 @@ export default function App() {
 			}
 		})()
 	}, [])
+
+	const convertToBase64 = async (uri:string) =>{
+		try{
+			const base64 = await FileSystem.readAsStringAsync(uri, {
+				encoding: FileSystem.EncodingType.Base64
+			})
+			setBase64(base64)
+		} catch (error){
+			console.error("Erreur de conversion en base64:", error)
+			return null
+		}
+	}
 
 	const takePhoto = async () => {
 		if (cameraRef.current) {
