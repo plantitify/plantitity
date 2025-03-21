@@ -25,7 +25,17 @@ export default function TabLayout() {
             flexDirection: 'row',
             justifyContent: 'space-between',
           },
-          default: {},
+          default: {
+            flex: 1,
+            position: 'absolute',
+            bottom: 30,
+            marginHorizontal: 50,
+            borderRadius: 10,
+            backgroundColor: '#F7F5FA',
+            height: 65,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+          },
         }),
         tabBarLabelStyle: {
           display: 'none'

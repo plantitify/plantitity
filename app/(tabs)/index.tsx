@@ -1,9 +1,6 @@
-import { StyleSheet, TouchableOpacity, Platform } from 'react-native';
+import { StyleSheet, TouchableOpacity, View, Text } from 'react-native';
 import { useRouter } from 'expo-router';
 
-import { HelloWave } from '@/components/HelloWave';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 
 export default function HomeScreen() {
@@ -11,15 +8,15 @@ export default function HomeScreen() {
 
   return (
     <>
-      <ThemedView style={styles.container}>
-        <ThemedText style={styles.title}>Bienvenue sur Plantitify</ThemedText>
+      <View style={styles.container}>
+        <Text style={styles.title}>Bienvenue sur Plantitity</Text>
         <TouchableOpacity 
           style={styles.button}
           onPress={() => router.push('/camera')}>
           <IconSymbol size={24} name="camera.fill" color="#FFFFFF" />
-          <ThemedText style={styles.buttonText}>Prendre une photo</ThemedText>
+          <Text style={styles.buttonText}>Prendre une photo</Text>
         </TouchableOpacity>
-      </ThemedView>
+      </View>
     </> 
   );
 }
@@ -49,9 +46,5 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
   },
 });
